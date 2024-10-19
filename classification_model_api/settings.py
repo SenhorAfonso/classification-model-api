@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +26,17 @@ SECRET_KEY = 'django-insecure-rtm+%f3%#q2_ab3(ymyg$udelb1+$upqu#0hk9!#d67n_@xvo-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '192.168.237.67',
+    'localhost',
+    '127.0.0.1',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://192.168.237.67:8000',
+    'http://10.0.2.2:8000',  # Endereço do localhost para o emulador do Android
+]
+
 
 
 # Application definition
@@ -51,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'classification_model_api.urls'
@@ -73,7 +85,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'classification_model_api.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -83,7 +94,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
