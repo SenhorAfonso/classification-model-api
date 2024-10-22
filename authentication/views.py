@@ -1,3 +1,4 @@
+import base64
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
@@ -10,6 +11,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from models.views import predict_from_payload
 
 
 @csrf_exempt
@@ -26,26 +28,41 @@ def get_google_token(request):
         social_user = social_users.latest('pk')
         access_token = social_user.extra_data['access_token']
 
-        print(f'{access_token=}')
         return access_token
     else:
         return None
 
+
 @login_required
 def get_all_emails(request):
-    try:
-        access_token = get_google_token(request)
+    access_token = get_google_token(request)
 
-        creds = Credentials(token=access_token)
-        service = build('gmail', 'v1', credentials=creds)
+    creds = Credentials(token=access_token)
+    service = build('gmail', 'v1', credentials=creds)
 
-        result = service.users().messages().list(userId='me').execute()
-        messages = result.get('messages', [])
+    result = service.users().messages().list(userId='me').execute()
+    messages = result.get('messages', [])
 
-        return JsonResponse({'messages': messages})
+    return classify_emails(request, {'messages': messages})
 
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+
+def classify_emails(request, emails_response):
+    emails = emails_response['messages']
+    cleaned_up_emails = []
+
+    for email in emails:
+        email_id = email['id']
+        cleaned_email = get_single_email(request, email_id)
+
+        try:
+            email_label = predict_from_payload(cleaned_email['body'])
+            cleaned_email['is_phishing'] = bool(email_label['predicted'])
+        except Exception as e:
+            cleaned_email['is_phishing'] = 'unresolved'
+        finally:
+            cleaned_up_emails.append(cleaned_email)
+
+    return JsonResponse({'messages': cleaned_up_emails})
 
 
 def get_single_email(request, message_id):
@@ -55,44 +72,43 @@ def get_single_email(request, message_id):
 
     message = service.users().messages().get(userId='me', id=message_id).execute()
 
-    snippet = message.get('snippet')  # Um pequeno resumo do conteúdo do email
+    snippet = message.get('snippet')
     payload = message.get('payload', {})
     headers = payload.get('headers', [])
     body = None
+    sender = None
+
+    for item in headers:
+        if item['name'] == 'From':
+            sender = item['value']
 
     if 'parts' in payload:
         for part in payload['parts']:
             if part['mimeType'] == 'text/plain':
-                body = part['body'].get('data')
+                body = base64.urlsafe_b64decode(part['body'].get('data').encode('ASCII')).decode('utf-8')
 
-    return JsonResponse({
-        'snippet': snippet,
-        'headers': headers,
+    return {
+        'sender': sender,
+        'description': snippet,
         'body': body
-    })
+    }
 
 
 @csrf_exempt
 @require_POST
 def login_with_google(request):
     token = request.POST.get('token')
-    print("chamou?")
     try:
-        # Validação do token
         id_info = id_token.verify_oauth2_token(token, requests.Request(), 'YOUR_GOOGLE_CLIENT_ID')
 
         if id_info['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
             return JsonResponse({'error': 'Token inválido'}, status=400)
 
-        # Extraia informações do usuário
         user_google_id = id_info['sub']
         user_email = id_info['email']
 
-        # Autenticar ou criar o usuário no banco de dados
-        # Por exemplo, você pode verificar se o usuário já existe e logá-lo
         user, created = User.objects.get_or_create(username=user_google_id, email=user_email)
 
-        # Autenticar o usuário no Django
         login(request, user)
 
         return JsonResponse({'message': 'Usuário autenticado com sucesso'})

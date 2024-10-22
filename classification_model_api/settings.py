@@ -28,6 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '192.168.237.67',
+    '0.0.0.0',
     'localhost',
     '127.0.0.1',
 ]
@@ -84,6 +85,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'classification_model_api.wsgi.application'
+ASGI_APPLICATION = 'classification_model_api.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
