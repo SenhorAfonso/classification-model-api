@@ -1,6 +1,6 @@
-TrustMail 🛡️📧
-Projeto de Classificação de E-mails
-Trabalho AEP - Engenharia de Software, 6º Semestre
+# TrustMail 🛡️📧<br>
+Projeto de Classificação de E-mails<br>
+Trabalho AEP - Engenharia de Software, 6º Semestre<br>
 
 📋 Descrição do Projeto
 O TrustMail é um sistema desenvolvido para classificar e-mails entre seguros e phishing, utilizando técnicas de Machine Learning. O projeto foi desenvolvido como parte de um trabalho acadêmico (AEP) no curso de Engenharia de Software, 6º semestre.
