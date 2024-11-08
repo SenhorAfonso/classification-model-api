@@ -66,7 +66,7 @@ Precisão: 92% <br>
 Recall: 94% <br>
 
 
-Desenvolvido por:
+Desenvolvido por: <br>
 [Pedro Sena](https://www.linkedin.com/in/senhorafonso/) <br>
 [Rhayssa Andretto](https://www.linkedin.com/in/rhayssa-andretto/) <br>
 [Vinicius kenji ](https://www.linkedin.com/in/vin%C3%ADcius-kenji-439b38246/) <br>
