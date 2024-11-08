@@ -61,12 +61,12 @@ curl -X POST http://localhost:8000/model/predict/ \
 # 📊 Resultados do Modelo
 O modelo foi treinado usando um conjunto de dados com e-mails rotulados como seguros ou phishing, utilizando a técnica TF-IDF para vetorização e um classificador com rede neural em PyTorch. Após treinamento e validação, o modelo apresentou os seguintes resultados:
 
-Acurácia: 97.5%
-Precisão: 92%
-Recall: 94%
+Acurácia: 97.5% <br>
+Precisão: 92% <br>
+Recall: 94% <br>
 
 
 Desenvolvido por:
-[Pedro Sena](https://www.linkedin.com/in/senhorafonso/)
-[Rhayssa Andretto](https://www.linkedin.com/in/rhayssa-andretto/)
-[Vinicius kenji ](https://www.linkedin.com/in/vin%C3%ADcius-kenji-439b38246/)
+[Pedro Sena](https://www.linkedin.com/in/senhorafonso/) <br>
+[Rhayssa Andretto](https://www.linkedin.com/in/rhayssa-andretto/) <br>
+[Vinicius kenji ](https://www.linkedin.com/in/vin%C3%ADcius-kenji-439b38246/) <br>
